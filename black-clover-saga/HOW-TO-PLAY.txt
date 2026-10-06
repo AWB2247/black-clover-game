@@ -1,0 +1,7 @@
+BLACK CLOVER SAGA
+=================
+Double-click play-me.html (works on its own), or open index.html (needs game.js beside it).
+Use any modern browser. Needs internet only for the nice fonts; the game works offline.
+
+Keys: A/D move, W/Space jump, J slash, K special, Shift dash, Q Black Form, 1-5 call allies, P pause, M sound.
+Phone/tablet: on-screen buttons appear automatically.

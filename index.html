@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Black Clover Saga</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=UnifrakturCook:wght@700&display=swap">
+<style>
+/* Layout: one centred stage (the game), a quiet header above, key legend and touch pad below. */
+:root {
+  --ink: #0b0a10;
+  --ink-2: #15131f;
+  --line: #2c2840;
+  --bone: #efe8d6;
+  --mute: #a39dba;
+  --gold: #d9b25f;
+  --clover: #3fae6a;
+  --display: "UnifrakturCook", "Old English Text MT", "Times New Roman", serif;
+  --ui: "Barlow Condensed", "Arial Narrow", Arial, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  background: var(--ink);
+  color: var(--bone);
+  font-family: var(--ui);
+  font-size: 17px;
+  padding-inline: 16px;
+  padding-block: 14px 28px;
+  margin: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.wrap { max-width: 1000px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mark { display: flex; align-items: baseline; gap: 12px; min-width: 0; }
+.mark h1 { font-family: var(--display); font-weight: 700; font-size: 2rem; margin: 0; color: var(--gold); line-height: 1; white-space: nowrap; }
+.mark span { color: var(--mute); font-size: 0.95rem; letter-spacing: 0.12em; text-transform: uppercase; }
+@media (max-width: 560px) { .mark span { display: none; } .mark h1 { font-size: 1.7rem; } }
+button {
+  font: inherit; color: var(--bone); background: var(--ink-2); border: 1px solid var(--line);
+  border-radius: 6px; padding: 8px 14px; cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
+}
+button:hover { border-color: var(--gold); }
+button:focus-visible, canvas:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.stage { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; background: #000; line-height: 0; }
+canvas#game {
+  display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; touch-action: manipulation;
+  transition: filter 1.8s ease;
+}
+body.manga canvas#game { filter: grayscale(1) contrast(1.3); }
+
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 8px 22px; margin: 0; padding: 0; list-style: none; }
+.legend li { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--line); padding-bottom: 6px; min-width: 0; }
+.legend b { font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); font-size: 0.9rem; }
+kbd { font-family: var(--ui); font-weight: 700; background: var(--ink-2); border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 5px; padding: 1px 8px; margin-left: 4px; color: var(--bone); }
+.about { color: var(--mute); margin: 0; max-width: 70ch; font-size: 1rem; line-height: 1.45; }
+.about strong { color: var(--gold); font-weight: 600; }
+
+.pad { display: none; gap: 12px; user-select: none; -webkit-user-select: none; touch-action: none; }
+@media (pointer: coarse) { .pad { display: grid; } .legend { display: none; } }
+.pad { grid-template-columns: 1fr 1fr; align-items: end; }
+.pad .cluster { display: grid; gap: 8px; }
+.pad .move { grid-template-columns: repeat(2, 1fr); }
+.pad .act { grid-template-columns: repeat(3, 1fr); }
+.pad .allies { grid-column: 1 / -1; grid-template-columns: repeat(5, 1fr); }
+.pad button { min-height: 52px; padding: 6px; font-weight: 700; font-size: 1.05rem; touch-action: none; }
+.pad button.on { background: var(--gold); color: #1a1405; border-color: var(--gold); }
+.pad .big { grid-column: span 2; background: #241a3a; }
+.pad .al { border-color: var(--gold); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="mark"><h1>Black Clover Saga</h1><span>Anime, then Manga</span></div>
+    <button id="mute" type="button">Sound on</button>
+  </header>
+
+  <div class="stage"><canvas id="game" width="960" height="540" tabindex="0" aria-label="Black Clover Saga game"></canvas></div>
+
+  <ul class="legend" aria-label="Controls">
+    <li><b>Move</b><span><kbd>A</kbd><kbd>D</kbd> or <kbd>&larr;</kbd><kbd>&rarr;</kbd></span></li>
+    <li><b>Jump</b><span><kbd>W</kbd> <kbd>Space</kbd></span></li>
+    <li><b>Slash (anti-magic, reflects bolts)</b><span><kbd>J</kbd> or <kbd>Z</kbd></span></li>
+    <li><b>Black Meteorite</b><span><kbd>K</kbd> or <kbd>X</kbd></span></li>
+    <li><b>Dash</b><span><kbd>Shift</kbd> or <kbd>L</kbd></span></li>
+    <li><b>Black Form (full rage)</b><span><kbd>Q</kbd></span></li>
+    <li><b>Call a Black Bull</b><span><kbd>1</kbd>&ndash;<kbd>5</kbd></span></li>
+    <li><b>Pause / Sound</b><span><kbd>P</kbd> <kbd>M</kbd></span></li>
+  </ul>
+
+  <div class="pad" aria-label="Touch controls">
+    <div class="cluster move">
+      <button type="button" data-act="left">&larr;</button>
+      <button type="button" data-act="right">&rarr;</button>
+      <button type="button" data-act="jump" class="big">Jump</button>
+    </div>
+    <div class="cluster act">
+      <button type="button" data-act="slash" class="big">Slash</button>
+      <button type="button" data-act="special">Meteor</button>
+      <button type="button" data-act="dash">Dash</button>
+      <button type="button" data-act="demon" class="big">Black Form</button>
+    </div>
+    <div class="cluster allies">
+      <button type="button" data-act="a1" class="al">Noelle</button>
+      <button type="button" data-act="a2" class="al">Yami</button>
+      <button type="button" data-act="a3" class="al">Luck</button>
+      <button type="button" data-act="a4" class="al">Charmy</button>
+      <button type="button" data-act="a5" class="al">Yuno</button>
+    </div>
+  </div>
+
+  <p class="about"><strong>Anime Saga</strong> follows Asta from Hage Village to the Elf Reincarnation arc, in colour. When the anime ends, the screen drains to ink and the <strong>Manga Saga</strong> carries on through the Spade Kingdom raid to the final battle. Your sword cancels magic: slash enemy bolts back at them. Fan-made tribute to Black Clover by Yuki Tabata, not affiliated or endorsed.</p>
+</div>
+<script src="game.js"></script>
+</body>
+</html>
